@@ -36,6 +36,8 @@ impl Sequence {
     }
 
     pub fn from_slice<P: AsRef<[u8]>>(value: P) -> Self {
-        Self { code: value.as_ref().to_vec() }
+        Self {
+            code: value.as_ref().to_vec(),
+        }
     }
 }

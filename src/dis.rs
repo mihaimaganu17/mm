@@ -3,7 +3,8 @@ use crate::bytecode::{OpCode, Sequence};
 pub struct Disassembler;
 
 impl Disassembler {
-    pub fn dis_sequence(sequence: &Sequence) {
+    pub fn dis_sequence(sequence: &Sequence, name: &str) {
+        println!("== {} ==", name);
         // Start at the beginning of the sequence
         let mut offset = 0;
         // While we still have bytes

@@ -4,6 +4,17 @@
 pub enum OpCode {
     // Return from function / call
     Return,
+    // Unknown byte, kept for debugging
+    Unknown(u8),
+}
+
+impl From<u8> for OpCode {
+    fn from(value: u8) -> Self {
+        match value {
+            0 => Self::Return,
+            _ => Self::Unknown(value),
+        }
+    }
 }
 
 /// A series of bytecode instructions
@@ -18,5 +29,9 @@ impl Sequence {
 
     pub fn push(&mut self, byte: u8) {
         self.code.push(byte)
+    }
+
+    pub fn code(&self) -> &[u8] {
+        self.code.as_slice()
     }
 }

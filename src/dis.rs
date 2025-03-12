@@ -3,6 +3,7 @@ use crate::bytecode::{OpCode, Sequence};
 pub struct Disassembler;
 
 impl Disassembler {
+    pub fn new() -> Self { Self }
     pub fn dis_sequence(sequence: &Sequence, name: &str) {
         println!("== {} ==", name);
         // Start at the beginning of the sequence

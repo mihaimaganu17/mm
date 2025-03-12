@@ -2,11 +2,11 @@ mod bytecode;
 mod dis;
 
 pub use bytecode::{Sequence, OpCode};
+pub use dis::Disassembler;
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use dis::Disassembler;
 
     #[test]
     fn debug_dis() {

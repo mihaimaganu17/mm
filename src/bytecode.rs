@@ -1,5 +1,5 @@
 //! Module storing the building blocks for sequence of `mm` bytecode
-use crate::value::{ValueVec, Value};
+use crate::value::{Value, ValueVec};
 
 #[derive(Debug)]
 pub enum OpCode {
@@ -53,7 +53,8 @@ impl Sequence {
     }
 
     pub fn push<T: TryInto<u8>>(&mut self, byte: T, line: u32) -> Result<(), SequenceError> {
-        self.code.push(byte.try_into().map_err(|_e| SequenceError::PushByte)?);
+        self.code
+            .push(byte.try_into().map_err(|_e| SequenceError::PushByte)?);
         self.lines.push(line);
         Ok(())
     }
@@ -91,5 +92,4 @@ pub enum SequenceError {
 }
 
 #[derive(Debug)]
-pub enum OpCodeError {
-}
+pub enum OpCodeError {}

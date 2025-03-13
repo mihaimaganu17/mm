@@ -1,5 +1,6 @@
 use crate::bytecode::{OpCode, Sequence};
 
+#[derive(Default)]
 pub struct Disassembler;
 
 impl Disassembler {
@@ -32,16 +33,14 @@ impl Disassembler {
         print!("{} ", line_token);
 
         let instruction = sequence.code()[offset].into();
-        let offset = match instruction {
+        match instruction {
             OpCode::Return => Instruction::simple("OP_RETURN", offset),
             OpCode::Constant => Instruction::constant("OP_CONSTANT", sequence, offset),
             OpCode::Unknown(byte) => {
                 println!("Unknown opcode {}", byte);
                 offset + 1
             }
-        };
-
-        offset
+        }
     }
 }
 
@@ -55,7 +54,7 @@ impl Instruction {
 
     pub fn constant(name: &str, sequence: &Sequence, offset: usize) -> usize {
         // Get the constant index
-        let constant_idx = sequence.code()[offset+1];
+        let constant_idx = sequence.code()[offset + 1];
         // Get thec constant, based on index
         let constant = sequence.constant(constant_idx as usize);
         println!("{name} {constant_idx} -> value: {constant}");

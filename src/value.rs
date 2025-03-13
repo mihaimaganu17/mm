@@ -19,10 +19,6 @@ impl fmt::Display for Value {
 pub struct ValueVec(pub Vec<Value>);
 
 impl ValueVec {
-    pub fn new() -> Self {
-        Self(vec![])
-    }
-
     pub fn push(&mut self, value: Value) {
         self.0.push(value)
     }

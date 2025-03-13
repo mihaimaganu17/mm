@@ -62,6 +62,10 @@ impl Sequence {
         self.code.as_slice()
     }
 
+    pub fn line(&self, idx: usize) -> u32 {
+        self.lines[idx]
+    }
+
     pub fn constant(&self, idx: usize) -> &Value {
         &self.constants.values()[idx]
     }

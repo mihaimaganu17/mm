@@ -18,7 +18,7 @@ mod tests {
         // Add a new constant to the constants' storage
         let constant_idx = seq.add_constant(constant);
         // Push the new instruction
-        seq.push(OpCode::Constant, 1337).unwrap();
+        seq.push(OpCode::Constant, 17).unwrap();
         // Push the operand for the instruction
         seq.push(constant_idx, 1337).unwrap();
         // Push return

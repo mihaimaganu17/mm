@@ -19,7 +19,17 @@ impl Disassembler {
     }
 
     pub fn dis_instruction(sequence: &Sequence, offset: usize) -> usize {
+        // Print offset of the instruction in the bytecode sequence
         print!("{:04} ", offset);
+        // Print information about the source code line. If we are not at the first offset and
+        // the current offset line is the same as a previous line, we print `|` to avoid noise.
+        // Otherwise, we print the source line
+        let line_token = if offset > 0 && sequence.line(offset) == sequence.line(offset - 1) {
+            "   |".to_string()
+        } else {
+            format!("{:04}", sequence.line(offset))
+        };
+        print!("{} ", line_token);
 
         let instruction = sequence.code()[offset].into();
         let offset = match instruction {

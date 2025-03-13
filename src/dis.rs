@@ -24,11 +24,7 @@ impl Disassembler {
         let instruction = sequence.code()[offset].into();
         let offset = match instruction {
             OpCode::Return => Instruction::simple("OP_RETURN", offset),
-            OpCode::Constant => {
-                let new_offset = Instruction::simple("OP_CONSTANT", offset);
-                println!("value {}", sequence.code()[new_offset]);
-                new_offset + 1
-            }
+            OpCode::Constant => Instruction::constant("OP_CONSTANT", sequence, offset),
             OpCode::Unknown(byte) => {
                 println!("Unknown opcode {}", byte);
                 offset + 1
@@ -45,5 +41,10 @@ impl Instruction {
     pub fn simple(name: &str, offset: usize) -> usize {
         println!("{name}");
         offset + 1
+    }
+
+    pub fn constant(name: &str, sequence: &Sequence, offset: usize) -> usize {
+        println!("{name} {}", sequence.code()[offset+1]);
+        offset + 2
     }
 }

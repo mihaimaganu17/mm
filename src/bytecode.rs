@@ -56,6 +56,10 @@ impl Sequence {
         self.code.as_slice()
     }
 
+    pub fn constant(&self, idx: usize) -> &Value {
+        &self.constants.values()[idx]
+    }
+
     pub fn from_slice<P: AsRef<[u8]>>(value: P) -> Self {
         Self {
             code: value.as_ref().to_vec(),

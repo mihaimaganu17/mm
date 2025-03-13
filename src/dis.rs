@@ -44,7 +44,11 @@ impl Instruction {
     }
 
     pub fn constant(name: &str, sequence: &Sequence, offset: usize) -> usize {
-        println!("{name} {}", sequence.code()[offset+1]);
+        // Get the constant index
+        let constant_idx = sequence.code()[offset+1];
+        // Get thec constant, based on index
+        let constant = sequence.constant(constant_idx as usize);
+        println!("{name} {constant_idx} -> value: {constant}");
         offset + 2
     }
 }

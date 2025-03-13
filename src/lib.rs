@@ -1,5 +1,6 @@
 mod bytecode;
 mod dis;
+mod value;
 
 pub use bytecode::{OpCode, Sequence};
 pub use dis::Disassembler;

@@ -64,7 +64,7 @@ impl Sequence {
     pub fn push<T: TryInto<u8>>(&mut self, byte: T, line: u32) -> Result<(), SequenceError> {
         self.code
             .push(byte.try_into().map_err(|_e| SequenceError::PushByte)?);
-        if self.lines.len() > 0 {
+        if !self.lines.is_empty() {
             let last_line_idx = self.lines.len() - 1;
             let last_line = self.lines[last_line_idx];
             if line == last_line.0 {
@@ -122,24 +122,25 @@ impl Sequence {
     }
 
     /// Writes a constant's index as a one-byte or 3-byte form
-    pub fn write_constant(&mut self, value: Value, line: u32) {
+    pub fn write_constant(&mut self, value: Value, line: u32) -> Result<(), SequenceError> {
         let idx = self.add_constant(value);
 
         // Check the size of our index value. If the value exceeds 255.
         if idx > 0xff {
             // Push the opcode
-            self.push(OpCode::ConstantLong, line);
+            self.push(OpCode::ConstantLong, line)?;
             // We decide to store its index as a 3-byte value in Little Endian
             let bytes = idx.to_le_bytes();
             for byte in bytes.iter().take(3) {
-                self.push(*byte, line);
+                self.push(*byte, line)?;
             }
         } else {
             // Push the opcode
-            self.push(OpCode::Constant, line);
+            self.push(OpCode::Constant, line)?;
             // Otherwise, we just write the 1-byte value
-            self.push(idx, line);
+            self.push(idx, line)?;
         }
+        Ok(())
     }
 }
 

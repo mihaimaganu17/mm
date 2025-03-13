@@ -20,9 +20,18 @@ mod tests {
         // Push the new instruction
         seq.push(OpCode::Constant, 17).unwrap();
         // Push the operand for the instruction
-        seq.push(constant_idx, 1337).unwrap();
+        seq.push(constant_idx, 17).unwrap();
         // Push return
-        seq.push(OpCode::Return, 1337).unwrap();
+        seq.push(OpCode::Return, 13).unwrap();
+        seq.push(OpCode::Constant, 13).unwrap();
+        // Push the operand for the instruction
+        seq.push(constant_idx, 13).unwrap();
+        // Push return
+        seq.push(OpCode::Return, 17).unwrap();
+        seq.push(OpCode::Return, 17).unwrap();
+        seq.push(OpCode::Return, 17).unwrap();
+        seq.push(OpCode::Return, 14).unwrap();
+        seq.push(OpCode::Return, 14).unwrap();
         Disassembler::dis_sequence(&seq, "test sequence");
     }
 }

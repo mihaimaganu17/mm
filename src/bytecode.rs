@@ -38,9 +38,12 @@ impl TryInto<u8> for OpCode {
 pub struct Sequence {
     // Stores the entire bytes code sequence
     code: Vec<u8>,
-    // Stores lines of the source code, mapped at the same index as the opcodes they refer to from
-    // the `code` field
-    lines: Vec<u32>,
+    // Stores lines of the source code, using a run-length encoding algorithm where successive
+    // opcodes stored on the same line only store the line number and the number of successive
+    // occurences of that line number. Information is stored as 2 integers:
+    // 1. First is the line number
+    // 2. Second is the number of occurences of the line
+    lines: Vec<(u32, u32)>,
     // Stores constant values, referred to by their index
     constants: ValueVec,
 }
@@ -55,7 +58,21 @@ impl Sequence {
     pub fn push<T: TryInto<u8>>(&mut self, byte: T, line: u32) -> Result<(), SequenceError> {
         self.code
             .push(byte.try_into().map_err(|_e| SequenceError::PushByte)?);
-        self.lines.push(line);
+        if self.lines.len() > 0 {
+            let last_line_idx = self.lines.len() - 1;
+            let last_line = self.lines[last_line_idx];
+            if line == last_line.0 {
+                // If the `line` is the same as the last line pushed, we only increase the number of
+                // occurences of the last already existing entry in lines
+                self.lines[last_line_idx] = (last_line.0, last_line.1 + 1);
+            } else {
+                // Otherwise we add a new entry
+                self.lines.push((line, 1));
+            }
+        } else {
+            // Otherwise we add a new entry
+            self.lines.push((line, 1));
+        }
         Ok(())
     }
 
@@ -64,7 +81,18 @@ impl Sequence {
     }
 
     pub fn line(&self, idx: usize) -> u32 {
-        self.lines[idx]
+        // Computes the index of the last opcode having the current line number
+        let mut run_length_index = 0;
+        // For each occurence of line's run-length
+        for (line, occurences) in self.lines.iter() {
+            // Add the number of occurences
+            run_length_index += occurences;
+            // If our number of occurences goes past the desired index, we are in the desired range
+            if (idx as u32) < run_length_index {
+                return *line;
+            }
+        }
+        0
     }
 
     pub fn constant(&self, idx: usize) -> &Value {

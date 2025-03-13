@@ -36,6 +36,7 @@ impl Disassembler {
         match instruction {
             OpCode::Return => Instruction::simple("OP_RETURN", offset),
             OpCode::Constant => Instruction::constant("OP_CONSTANT", sequence, offset),
+            OpCode::ConstantLong => Instruction::constant_long("OP_CONSTANT_LONG", sequence, offset),
             OpCode::Unknown(byte) => {
                 println!("Unknown opcode {}", byte);
                 offset + 1
@@ -55,6 +56,19 @@ impl Instruction {
     pub fn constant(name: &str, sequence: &Sequence, offset: usize) -> usize {
         // Get the constant index
         let constant_idx = sequence.code()[offset + 1];
+        // Get thec constant, based on index
+        let constant = sequence.constant(constant_idx as usize);
+        println!("{name} {constant_idx} -> value: {constant}");
+        offset + 2
+    }
+
+    pub fn constant_long(name: &str, sequence: &Sequence, offset: usize) -> usize {
+        // Get the constant index which comprises of the next 3 bytes.
+        let mut constant_idx = [0; 4];
+        for (idx, byte) in sequence.code()[offset+1..].iter().take(3).enumerate() {
+            constant_idx[idx] = *byte;
+        }
+        let constant_idx = u32::from_le_bytes(constant_idx);
         // Get thec constant, based on index
         let constant = sequence.constant(constant_idx as usize);
         println!("{name} {constant_idx} -> value: {constant}");

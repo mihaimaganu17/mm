@@ -1,4 +1,5 @@
 //! Module storing the building blocks for sequence of `mm` bytecode
+use crate::value::{ValueVec, Value};
 
 #[derive(Debug)]
 pub enum OpCode {
@@ -18,13 +19,17 @@ impl From<u8> for OpCode {
 }
 
 /// A series of bytecode instructions
+#[derive(Default)]
 pub struct Sequence {
     code: Vec<u8>,
+    constants: ValueVec,
 }
 
 impl Sequence {
     pub fn new() -> Self {
-        Self { code: vec![] }
+        Self {
+            ..Default::default()
+        }
     }
 
     pub fn push(&mut self, byte: u8) {
@@ -38,6 +43,14 @@ impl Sequence {
     pub fn from_slice<P: AsRef<[u8]>>(value: P) -> Self {
         Self {
             code: value.as_ref().to_vec(),
+            constants: ValueVec::new(),
         }
+    }
+
+    /// Appends a new value to the underlying storage for this byte sequence's constants.
+    /// Returns the index where the value was added
+    pub fn add_constant(&mut self, value: Value) -> usize {
+        self.constants.push(value);
+        self.constants.0.len() - 1
     }
 }

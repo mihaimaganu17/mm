@@ -72,6 +72,6 @@ impl Instruction {
         // Get thec constant, based on index
         let constant = sequence.constant(constant_idx as usize);
         println!("{name} {constant_idx} -> value: {constant}");
-        offset + 2
+        offset + 4
     }
 }

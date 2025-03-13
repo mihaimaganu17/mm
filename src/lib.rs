@@ -29,6 +29,13 @@ mod tests {
         seq.push(OpCode::Return, 17).unwrap();
         seq.push(OpCode::Return, 14).unwrap();
         seq.push(OpCode::Return, 14).unwrap();
+        // Check if constant long works
+        for i in 0..300u16 {
+            // Create a new constant
+            let constant = Value::from(f32::from(i));
+            // Push the operand for the instruction
+            seq.write_constant(constant, 13);
+        }
         Disassembler::dis_sequence(&seq, "test sequence");
     }
 }

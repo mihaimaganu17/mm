@@ -5,8 +5,12 @@ use crate::value::{Value, ValueVec};
 pub enum OpCode {
     // Return from function / call
     Return,
-    // Load / produce a constant with the index given by the byte following the opcode
+    // Load / produce a constant with the index given by the byte following the opcode. This limits
+    // the expressed constant index to be 256 bytes long
     Constant,
+    // Load / produce a constant with the index given by the next 3 bytes following the opcode in
+    // LittleEndian format
+    ConstantLong,
     // Unknown byte, kept for debugging
     Unknown(u8),
 }
@@ -16,6 +20,7 @@ impl From<u8> for OpCode {
         match value {
             0 => Self::Return,
             1 => Self::Constant,
+            2 => Self::ConstantLong,
             _ => Self::Unknown(value),
         }
     }
@@ -28,6 +33,7 @@ impl TryInto<u8> for OpCode {
         match self {
             Self::Return => Ok(0),
             Self::Constant => Ok(1),
+            Self::ConstantLong => Ok(2),
             Self::Unknown(value) => Ok(value),
         }
     }
@@ -109,8 +115,31 @@ impl Sequence {
     /// Appends a new value to the underlying storage for this byte sequence's constants.
     /// Returns the index where the value was added
     pub fn add_constant(&mut self, value: Value) -> usize {
+        // Push the value in the constants pool
         self.constants.push(value);
+        // Get the index where the constant was pushed
         self.constants.0.len() - 1
+    }
+
+    /// Writes a constant's index as a one-byte or 3-byte form
+    pub fn write_constant(&mut self, value: Value, line: u32) {
+        let idx = self.add_constant(value);
+
+        // Check the size of our index value. If the value exceeds 255.
+        if idx > 0xff {
+            // Push the opcode
+            self.push(OpCode::ConstantLong, line);
+            // We decide to store its index as a 3-byte value in Little Endian
+            let bytes = idx.to_le_bytes();
+            for byte in bytes.iter().take(3) {
+                self.push(*byte, line);
+            }
+        } else {
+            // Push the opcode
+            self.push(OpCode::Constant, line);
+            // Otherwise, we just write the 1-byte value
+            self.push(idx, line);
+        }
     }
 }
 

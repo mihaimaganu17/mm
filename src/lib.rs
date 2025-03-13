@@ -18,11 +18,11 @@ mod tests {
         // Add a new constant to the constants' storage
         let constant_idx = seq.add_constant(constant);
         // Push the new instruction
-        seq.push(OpCode::Constant);
+        seq.push(OpCode::Constant).unwrap();
         // Push the operand for the instruction
-        seq.push(constant_idx);
+        seq.push(constant_idx).unwrap();
         // Push return
-        seq.push(OpCode::Return);
+        seq.push(OpCode::Return).unwrap();
         Disassembler::dis_sequence(&seq, "test sequence");
     }
 }

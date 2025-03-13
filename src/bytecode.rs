@@ -71,10 +71,11 @@ impl Sequence {
     }
 }
 
+#[derive(Debug)]
 pub enum SequenceError {
     PushByte,
 }
 
+#[derive(Debug)]
 pub enum OpCodeError {
-    PushByte,
 }

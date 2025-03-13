@@ -4,6 +4,7 @@ mod value;
 
 pub use bytecode::{OpCode, Sequence};
 pub use dis::Disassembler;
+pub use value::Value;
 
 #[cfg(test)]
 mod tests {
@@ -12,7 +13,16 @@ mod tests {
     #[test]
     fn debug_dis() {
         let mut seq = Sequence::new();
-        seq.push(0);
+        // Create a new constant
+        let constant = Value::from(1.2);
+        // Add a new constant to the constants' storage
+        let constant_idx = seq.add_constant(constant);
+        // Push the new instruction
+        seq.push(OpCode::Constant);
+        // Push the operand for the instruction
+        seq.push(constant_idx);
+        // Push return
+        seq.push(OpCode::Return);
         Disassembler::dis_sequence(&seq, "test sequence");
     }
 }

@@ -5,6 +5,8 @@ use crate::value::{ValueVec, Value};
 pub enum OpCode {
     // Return from function / call
     Return,
+    // Load / produce a constant with the index given by the byte following the opcode
+    Constant,
     // Unknown byte, kept for debugging
     Unknown(u8),
 }
@@ -13,7 +15,20 @@ impl From<u8> for OpCode {
     fn from(value: u8) -> Self {
         match value {
             0 => Self::Return,
+            1 => Self::Constant,
             _ => Self::Unknown(value),
+        }
+    }
+}
+
+impl TryInto<u8> for OpCode {
+    type Error = OpCodeError;
+
+    fn try_into(self) -> Result<u8, Self::Error> {
+        match self {
+            Self::Return => Ok(0),
+            Self::Constant => Ok(1),
+            Self::Unknown(value) => Ok(value),
         }
     }
 }
@@ -32,8 +47,9 @@ impl Sequence {
         }
     }
 
-    pub fn push(&mut self, byte: u8) {
-        self.code.push(byte)
+    pub fn push<T: TryInto<u8>>(&mut self, byte: T) -> Result<(), SequenceError> {
+        self.code.push(byte.try_into().map_err(|_e| SequenceError::PushByte)?);
+        Ok(())
     }
 
     pub fn code(&self) -> &[u8] {
@@ -53,4 +69,12 @@ impl Sequence {
         self.constants.push(value);
         self.constants.0.len() - 1
     }
+}
+
+pub enum SequenceError {
+    PushByte,
+}
+
+pub enum OpCodeError {
+    PushByte,
 }

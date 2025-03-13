@@ -24,6 +24,7 @@ impl Disassembler {
         let instruction = sequence.code()[offset].into();
         let offset = match instruction {
             OpCode::Return => Instruction::simple("OP_RETURN", offset),
+            OpCode::Constant => Instruction::simple("OP_CONSTANT", offset),
             OpCode::Unknown(byte) => {
                 println!("Unknown opcode {}", byte);
                 offset + 1

@@ -36,7 +36,12 @@ impl TryInto<u8> for OpCode {
 /// A series of bytecode instructions
 #[derive(Default)]
 pub struct Sequence {
+    // Stores the entire bytes code sequence
     code: Vec<u8>,
+    // Stores lines of the source code, mapped at the same index as the opcodes they refer to from
+    // the `code` field
+    lines: Vec<u32>,
+    // Stores constant values, referred to by their index
     constants: ValueVec,
 }
 
@@ -47,8 +52,9 @@ impl Sequence {
         }
     }
 
-    pub fn push<T: TryInto<u8>>(&mut self, byte: T) -> Result<(), SequenceError> {
+    pub fn push<T: TryInto<u8>>(&mut self, byte: T, line: u32) -> Result<(), SequenceError> {
         self.code.push(byte.try_into().map_err(|_e| SequenceError::PushByte)?);
+        self.lines.push(line);
         Ok(())
     }
 
@@ -63,7 +69,7 @@ impl Sequence {
     pub fn from_slice<P: AsRef<[u8]>>(value: P) -> Self {
         Self {
             code: value.as_ref().to_vec(),
-            constants: ValueVec::new(),
+            ..Default::default()
         }
     }
 

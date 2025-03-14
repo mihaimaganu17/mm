@@ -6,7 +6,7 @@ use core::{
 };
 
 /// Maximum number of bytes that `MmAllocator` can allocate until it runs out of memory.
-const MEM_POOL_SIZE: usize = 256 * 1024;
+const MEM_POOL_SIZE: usize = 256 * 10024;
 
 pub struct MmAllocator {
     pool: UnsafeCell<[u8; MEM_POOL_SIZE]>,
@@ -19,7 +19,7 @@ pub struct MmAllocator {
 unsafe impl Sync for MmAllocator {}
 
 /// Custom Allocator for the `mm` compiler
-//#[global_allocator]
+#[global_allocator]
 pub static ALLOCATOR: MmAllocator = MmAllocator {
     pool: UnsafeCell::new([0; MEM_POOL_SIZE]),
     next_free_addr: AtomicUsize::new(0),
@@ -27,7 +27,8 @@ pub static ALLOCATOR: MmAllocator = MmAllocator {
 
 unsafe impl GlobalAlloc for MmAllocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        // Compute the amount of memory we need
+        // Compute the amount of memory we need. By default `Layout` does not allow an align value
+        // of 0, so we are safe to subtract 1 here
         let mem_needed = (layout.size() + layout.align() - 1) & !(layout.align() - 1);
         // Check if we have space
         if self.next_free_addr.load(Ordering::Relaxed) + mem_needed > self.pool.get().as_ref().unwrap().len() {
@@ -39,5 +40,5 @@ unsafe impl GlobalAlloc for MmAllocator {
         }
     }
 
-    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {}
+    unsafe fn dealloc(&self, _ptr: *mut u8, _layout: Layout) {}
 }

@@ -38,6 +38,24 @@ mod tests {
             // Push the operand for the instruction
             seq.write_constant(constant, 13);
         }*/
+        let mut seq2 = Sequence::new();
+        // Create a new constant
+        let constant = Value::from(1.2);
+        // Push the operand for the instruction
+        seq2.write_constant(constant, 99).unwrap();
+        // Push return
+        seq2.push(OpCode::Return, 1119).unwrap();
+        // Create a new constant
+        let constant = Value::from(1119.9);
+        // Push the operand for the instruction
+        seq2.write_constant(constant, 1119).unwrap();
+        // Push return
+        seq2.push(OpCode::Return, 99).unwrap();
+        seq2.push(OpCode::Return, 99).unwrap();
+        seq2.push(OpCode::Return, 99).unwrap();
+        seq2.push(OpCode::Return, 14).unwrap();
+        seq2.push(OpCode::Return, 14).unwrap();
         Disassembler::dis_sequence(&seq, "test sequence");
+        Disassembler::dis_sequence(&seq2, "test sequence2");
     }
 }

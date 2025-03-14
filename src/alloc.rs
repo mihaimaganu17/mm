@@ -7,7 +7,7 @@ pub struct MmAllocator;
 
 /// Custom Allocator for the `mm` compiler
 #[global_allocator]
-static Allocator: MmAllocator = MmAllocator;
+static ALLOCATOR: MmAllocator = MmAllocator;
 
 unsafe impl GlobalAlloc for MmAllocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {

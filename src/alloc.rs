@@ -1,7 +1,7 @@
 use core::{
     alloc::{GlobalAlloc, Layout},
-    ptr,
     cell::UnsafeCell,
+    ptr,
     sync::atomic::{AtomicUsize, Ordering},
 };
 
@@ -32,10 +32,9 @@ unsafe impl GlobalAlloc for MmAllocator {
 
         let mut allocated = 0;
         // Check if we have space
-        if self.remaining.fetch_update(
-            Ordering::Relaxed,
-            Ordering::Relaxed,
-            |mut remaining| {
+        if self
+            .remaining
+            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |mut remaining| {
                 // If there is not enough space, we return
                 if size > remaining {
                     return None;
@@ -44,8 +43,9 @@ unsafe impl GlobalAlloc for MmAllocator {
                 remaining &= mask;
                 allocated = remaining;
                 Some(remaining)
-            }
-        ).is_err() {
+            })
+            .is_err()
+        {
             return ptr::null_mut();
         }
 

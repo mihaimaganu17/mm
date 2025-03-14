@@ -3,8 +3,11 @@ use core::{
     ptr,
 };
 
-/// Custom Allocator for the `mm` compiler
 pub struct MmAllocator;
+
+/// Custom Allocator for the `mm` compiler
+#[global_allocator]
+static Allocator: MmAllocator = MmAllocator;
 
 unsafe impl GlobalAlloc for MmAllocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {

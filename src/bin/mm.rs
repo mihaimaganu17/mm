@@ -43,6 +43,7 @@ fn main() {
         seq2.push(OpCode::Return, 99).unwrap();
         seq2.push(OpCode::Return, 14).unwrap();
         seq2.push(OpCode::Return, 14).unwrap();
+        seq.push(OpCode::Return, 14).unwrap();
         Disassembler::dis_sequence(&seq, "test sequence");
         Disassembler::dis_sequence(&seq2, "test sequence2");
 }

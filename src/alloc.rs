@@ -12,7 +12,7 @@ pub struct MmAllocator {
     pool: UnsafeCell<[u8; MEM_POOL_SIZE]>,
     // We use `AtomicUsize` because we need to make sure that if 2 threads are trying to allocate
     // at the same time, there does not exist a race condition for accessing the memory pool
-    next_free_addr: AtomicUsize,
+    remaining: AtomicUsize,
 }
 
 /// static variables need to be shared safely between threads
@@ -22,22 +22,35 @@ unsafe impl Sync for MmAllocator {}
 #[global_allocator]
 pub static ALLOCATOR: MmAllocator = MmAllocator {
     pool: UnsafeCell::new([0; MEM_POOL_SIZE]),
-    next_free_addr: AtomicUsize::new(0),
+    remaining: AtomicUsize::new(MEM_POOL_SIZE),
 };
 
 unsafe impl GlobalAlloc for MmAllocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        // Compute the amount of memory we need. By default `Layout` does not allow an align value
-        // of 0, so we are safe to subtract 1 here
-        let mem_needed = (layout.size() + layout.align() - 1) & !(layout.align() - 1);
+        let size = layout.size();
+        let mask = !(layout.align() - 1);
+
+        let mut allocated = 0;
         // Check if we have space
-        if self.next_free_addr.load(Ordering::Relaxed) + mem_needed > self.pool.get().as_ref().unwrap().len() {
-            ptr::null_mut()
-        } else {
-            self.next_free_addr.fetch_add(mem_needed, Ordering::SeqCst);
-            // Get the pointer to the underlying data at the proper offset
-            (self.pool.get() as *mut u8).add(mem_needed)
+        if self.remaining.fetch_update(
+            Ordering::Relaxed,
+            Ordering::Relaxed,
+            |mut remaining| {
+                // If there is not enough space, we return
+                if size > remaining {
+                    return None;
+                }
+                remaining -= size;
+                remaining &= mask;
+                allocated = remaining;
+                Some(remaining)
+            }
+        ).is_err() {
+            return ptr::null_mut();
         }
+
+        // Get the pointer to the underlying data at the proper offset
+        (self.pool.get() as *mut u8).add(allocated)
     }
 
     unsafe fn dealloc(&self, _ptr: *mut u8, _layout: Layout) {}

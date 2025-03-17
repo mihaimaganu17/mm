@@ -7,6 +7,7 @@ mod vm;
 pub use bytecode::{OpCode, Sequence};
 pub use dis::Disassembler;
 pub use value::Value;
+pub use vm::VM;
 
 #[cfg(test)]
 mod tests {
@@ -31,6 +32,8 @@ mod tests {
         seq.push(OpCode::Return, 17).unwrap();
         seq.push(OpCode::Return, 14).unwrap();
         seq.push(OpCode::Return, 14).unwrap();
+        // Create a new VM that will execute code
+        let vm = VM::new(&seq);
         /*
         // Check if constant long works
         for i in 0..300u16 {

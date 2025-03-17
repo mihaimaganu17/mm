@@ -2,6 +2,7 @@ mod alloc;
 mod bytecode;
 mod dis;
 mod value;
+mod vm;
 
 pub use bytecode::{OpCode, Sequence};
 pub use dis::Disassembler;

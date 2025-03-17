@@ -19,7 +19,7 @@ pub struct MmAllocator {
 unsafe impl Sync for MmAllocator {}
 
 /// Custom Allocator for the `mm` compiler
-#[global_allocator]
+//#[global_allocator]
 pub static ALLOCATOR: MmAllocator = MmAllocator {
     pool: UnsafeCell::new([0; MEM_POOL_SIZE]),
     remaining: AtomicUsize::new(MEM_POOL_SIZE),

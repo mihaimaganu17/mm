@@ -1,5 +1,4 @@
 use std::fmt;
-use crate::Sequence;
 
 #[derive(Debug)]
 pub struct Value(f32);

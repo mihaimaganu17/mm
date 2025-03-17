@@ -1,4 +1,4 @@
-use crate::{Disassembler, OpCode, Value, Sequence};
+use crate::{Disassembler, OpCode, Sequence};
 use std::collections::LinkedList;
 
 // Flag enabling/disabling VM execution tracing for debugging
@@ -64,7 +64,7 @@ impl<'vm> VM<'vm> {
                     } else {
                         println!("None");
                     }
-                    return Ok(())
+                    return Ok(());
                 }
                 OpCode::Constant => {
                     // Get the index of the constant in the sequence storage
@@ -86,7 +86,7 @@ impl<'vm> VM<'vm> {
     // Empties the VM's stack
     pub fn reset_stack(&mut self) {
         // Pop elements from the stack until is is empty
-        while let Some(_) = self.stack.pop_back() {}
+        while self.stack.pop_back().is_some() {}
     }
 }
 
@@ -97,5 +97,3 @@ pub enum InterpretError {
     // Reports a dynamic error when running the bytecode
     RuntimeError,
 }
-
-pub enum Interpret {}

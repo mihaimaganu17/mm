@@ -39,9 +39,7 @@ impl Disassembler {
             OpCode::ConstantLong => {
                 Instruction::constant_long("OP_CONSTANT_LONG", sequence, offset)
             }
-            OpCode::Negate => {
-                Instruction::negation("OP_NEGATE", sequence, offset)
-            }
+            OpCode::Negate => Instruction::negation("OP_NEGATE", sequence, offset),
             OpCode::Unknown(byte) => {
                 println!("Unknown opcode {}", byte);
                 offset + 1
@@ -80,7 +78,7 @@ impl Instruction {
         offset + 4
     }
 
-    pub fn negation(name: &str, sequence: &Sequence, offset: usize) -> usize {
+    pub fn negation(name: &str, _sequence: &Sequence, offset: usize) -> usize {
         println!("{name}");
         offset + 1
     }

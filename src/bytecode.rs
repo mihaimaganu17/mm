@@ -11,6 +11,8 @@ pub enum OpCode {
     // Load / produce a constant with the index given by the next 3 bytes following the opcode in
     // LittleEndian format
     ConstantLong,
+    // Corresponds to the minus `-` operator that negates the succeding operand
+    Negate,
     // Unknown byte, kept for debugging
     Unknown(u8),
 }
@@ -21,6 +23,7 @@ impl From<u8> for OpCode {
             0 => Self::Return,
             1 => Self::Constant,
             2 => Self::ConstantLong,
+            3 => Self::Negate,
             _ => Self::Unknown(value),
         }
     }
@@ -34,6 +37,7 @@ impl TryInto<u8> for OpCode {
             Self::Return => Ok(0),
             Self::Constant => Ok(1),
             Self::ConstantLong => Ok(2),
+            Self::Negate => Ok(3),
             Self::Unknown(value) => Ok(value),
         }
     }

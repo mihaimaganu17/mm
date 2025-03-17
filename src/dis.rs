@@ -39,6 +39,9 @@ impl Disassembler {
             OpCode::ConstantLong => {
                 Instruction::constant_long("OP_CONSTANT_LONG", sequence, offset)
             }
+            OpCode::Negate => {
+                Instruction::negation("OP_NEGATE", sequence, offset)
+            }
             OpCode::Unknown(byte) => {
                 println!("Unknown opcode {}", byte);
                 offset + 1
@@ -75,5 +78,10 @@ impl Instruction {
         let constant = sequence.constant(constant_idx as usize);
         println!("{name} {constant_idx} -> value: {constant}");
         offset + 4
+    }
+
+    pub fn negation(name: &str, sequence: &Sequence, offset: usize) -> usize {
+        println!("{name}");
+        offset + 1
     }
 }

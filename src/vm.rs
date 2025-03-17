@@ -2,7 +2,7 @@ use crate::{Disassembler, OpCode, Value, Sequence};
 use std::collections::LinkedList;
 
 // Flag enabling/disabling VM execution tracing for debugging
-const DEBUG_TRACE_EXECUTION: bool = false;
+const DEBUG_TRACE_EXECUTION: bool = true;
 
 pub struct VM<'vm> {
     // Sequence of bytecode that the VM executes
@@ -57,10 +57,22 @@ impl<'vm> VM<'vm> {
             // Dispatch the instruction
             match instruction {
                 OpCode::Return => {
+                    // Print the top value from the stack
+                    if let Some(idx) = self.stack.pop_back() {
+                        let value = &self.sequence.constant(idx);
+                        println!("{value}");
+                    } else {
+                        println!("None");
+                    }
                     return Ok(())
                 }
                 OpCode::Constant => {
-                    let value = &self.sequence.read_constant(self.offset);
+                    // Get the index of the constant in the sequence storage
+                    let idx = self.sequence.code()[self.offset];
+                    // Push the value's index to the stack to enable the constant in this scope
+                    self.stack.push_back(usize::from(idx));
+                    // Read the value
+                    let value = &self.sequence.constant(usize::from(idx));
                     // Go past the constant
                     self.offset += 1;
                     println!("{value}");

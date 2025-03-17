@@ -24,12 +24,20 @@ impl<'vm> VM<'vm> {
     pub fn interpret(&mut self, sequence: &'vm Sequence) -> Result<(), InterpretError> {
         self.sequence = sequence;
 
-        let instruction = self.sequence.code()[self.offset].into();
-        match instruction {
-            OpCode::Return => {
-                return Ok(())
+        loop {
+            // If we reached the end of the sequence, break
+            if self.offset == self.sequence.code().len() {
+                break;
             }
-            _ => todo!(),
+            let instruction = self.sequence.code()[self.offset].into();
+            match instruction {
+                OpCode::Return => {
+                    return Ok(())
+                }
+                _ => todo!(),
+            }
+            // Go to the next offset
+            self.offset += 1;
         }
         Ok(())
     }

@@ -14,7 +14,9 @@ pub struct VM<'vm> {
     // an array by index. For the Rust case, the compiler makes use of instructions that do pointer
     // math and dereferencing in 1 or 2 cycles (like LEA on x86) so this claim does not hold
     offset: usize,
-    // Stack that holds the operators needed to perform any of the VM's operations.
+    // Stack that holds the operators needed to perform any of the VM's operations. It does not
+    // hold the actual operands or a reference to them, but rather, their index into the VM's
+    // storage.
     stack: LinkedList<usize>,
 }
 
@@ -38,6 +40,13 @@ impl<'vm> VM<'vm> {
             }
             // If we want to trace the debugging
             if DEBUG_TRACE_EXECUTION {
+                // Headline for the stack
+                println!("== Stack conttents ==");
+                // Print the stack contents
+                for value_idx in self.stack.iter() {
+                    println!("[{}]", self.sequence.constant(*value_idx));
+                }
+                println!("== Current instruction ==");
                 // We disassemble the instruction at the current point
                 Disassembler::dis_instruction(sequence, self.offset);
             }

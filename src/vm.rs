@@ -1,4 +1,4 @@
-use crate::{OpCode, Sequence};
+use crate::{OpCode, Value, Sequence};
 
 pub struct VM<'vm> {
     // Sequence of bytecode that the VM executes
@@ -29,20 +29,29 @@ impl<'vm> VM<'vm> {
             if self.offset == self.sequence.code().len() {
                 break;
             }
+            // Get the instruction opcode
             let instruction = self.sequence.code()[self.offset].into();
+            // Get past the opcode
+            self.offset += 1;
+            // Dispatch the instruction
             match instruction {
                 OpCode::Return => {
                     return Ok(())
                 }
+                OpCode::Constant => {
+                    let constant = Value::read_constant(&self.sequence.code()[self.offset..]);
+                    // Go past the constant
+                    self.offset += 1;
+                    println!("{constant}");
+                }
                 _ => todo!(),
             }
-            // Go to the next offset
-            self.offset += 1;
         }
         Ok(())
     }
 }
 
+#[derive(Debug)]
 pub enum InterpretError {
     // Reports a static error when compiling the source code
     CompileError,

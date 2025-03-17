@@ -33,7 +33,8 @@ mod tests {
         seq.push(OpCode::Return, 14).unwrap();
         seq.push(OpCode::Return, 14).unwrap();
         // Create a new VM that will execute code
-        let vm = VM::new(&seq);
+        let mut vm = VM::new(&seq);
+        vm.interpret(&seq).unwrap();
         /*
         // Check if constant long works
         for i in 0..300u16 {

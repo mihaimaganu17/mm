@@ -1,4 +1,7 @@
-use crate::{OpCode, Value, Sequence};
+use crate::{Disassembler, OpCode, Value, Sequence};
+
+// Flag enabling/disabling VM execution tracing for debugging
+const DEBUG_TRACE_EXECUTION: bool = false;
 
 pub struct VM<'vm> {
     // Sequence of bytecode that the VM executes
@@ -28,6 +31,11 @@ impl<'vm> VM<'vm> {
             // If we reached the end of the sequence, break
             if self.offset == self.sequence.code().len() {
                 break;
+            }
+            // If we want to trace the debugging
+            if DEBUG_TRACE_EXECUTION {
+                // We disassemble the instruction at the current point
+                Disassembler::dis_instruction(sequence, self.offset);
             }
             // Get the instruction opcode
             let instruction = self.sequence.code()[self.offset].into();

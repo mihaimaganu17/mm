@@ -39,10 +39,10 @@ impl<'vm> VM<'vm> {
                     return Ok(())
                 }
                 OpCode::Constant => {
-                    let constant = Value::read_constant(&self.sequence.code()[self.offset..]);
+                    let value = &self.sequence.read_constant(self.offset);
                     // Go past the constant
                     self.offset += 1;
-                    println!("{constant}");
+                    println!("{value}");
                 }
                 _ => todo!(),
             }

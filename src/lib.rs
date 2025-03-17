@@ -21,7 +21,7 @@ mod tests {
         // Push the operand for the instruction
         seq.write_constant(constant, 17).unwrap();
         // Push return
-        seq.push(OpCode::Return, 13).unwrap();
+        // seq.push(OpCode::Return, 13).unwrap();
         // Create a new constant
         let constant = Value::from(13.9);
         // Push the operand for the instruction

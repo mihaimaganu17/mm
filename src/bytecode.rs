@@ -105,6 +105,11 @@ impl Sequence {
         &self.constants.values()[idx]
     }
 
+    pub fn read_constant(&self, offset: usize) -> &Value {
+        let idx = self.code()[offset];
+        self.constant(usize::from(idx))
+    }
+
     pub fn from_slice<P: AsRef<[u8]>>(value: P) -> Self {
         Self {
             code: value.as_ref().to_vec(),

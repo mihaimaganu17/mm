@@ -1,4 +1,5 @@
 use crate::{Disassembler, OpCode, Value, Sequence};
+use std::collections::LinkedList;
 
 // Flag enabling/disabling VM execution tracing for debugging
 const DEBUG_TRACE_EXECUTION: bool = false;
@@ -13,6 +14,8 @@ pub struct VM<'vm> {
     // an array by index. For the Rust case, the compiler makes use of instructions that do pointer
     // math and dereferencing in 1 or 2 cycles (like LEA on x86) so this claim does not hold
     offset: usize,
+    // Stack that holds the operators needed to perform any of the VM's operations.
+    stack: LinkedList<usize>,
 }
 
 impl<'vm> VM<'vm> {
@@ -20,6 +23,7 @@ impl<'vm> VM<'vm> {
         Self {
             sequence,
             offset: 0,
+            stack: LinkedList::new(),
         }
     }
 
@@ -56,6 +60,12 @@ impl<'vm> VM<'vm> {
             }
         }
         Ok(())
+    }
+
+    // Empties the VM's stack
+    pub fn reset_stack(&mut self) {
+        // Pop elements from the stack until is is empty
+        while let Some(_) = self.stack.pop_back() {}
     }
 }
 

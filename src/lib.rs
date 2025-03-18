@@ -122,4 +122,42 @@ mod tests {
         let mut vm = VM::new(&seq);
         vm.interpret(&seq).unwrap();
     }
+
+    #[test]
+    fn sub() {
+        let mut seq = Sequence::new();
+        let constant = Value::from(110.0);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        let constant = Value::from(23.0);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        // Push addition
+        seq.push(OpCode::Sub, 17).unwrap();
+        // Push return
+        seq.push(OpCode::Return, 18).unwrap();
+        // Create a new VM that will execute code
+        let mut vm = VM::new(&seq);
+        vm.interpret(&seq).unwrap();
+    }
+
+    #[test]
+    fn sub_neg_int() {
+        let mut seq = Sequence::new();
+        let constant = Value::from(30);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        let constant = Value::from(250);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        // Push addition
+        seq.push(OpCode::Negate, 17).unwrap();
+        // Push subtraction
+        seq.push(OpCode::Sub, 20).unwrap();
+        // Push return
+        seq.push(OpCode::Return, 21).unwrap();
+        // Create a new VM that will execute code
+        let mut vm = VM::new(&seq);
+        vm.interpret(&seq).unwrap();
+    }
 }

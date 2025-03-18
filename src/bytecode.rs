@@ -16,11 +16,11 @@ pub enum OpCode {
     // Corresponds to the plus `+` infix operator that adds 2 values
     Add,
     // Corresponds to the plus `-` infix operator that subtracts 2 values
-    Subtract,
+    Sub,
     // Corresponds to the plus `*` infix operator that multiplies 2 values
-    Multiply,
+    Mul,
     // Corresponds to the plus `/` infix operator that divides 2 values
-    Divide,
+    Div,
     // Unknown byte, kept for debugging
     Unknown(u8),
 }
@@ -33,9 +33,9 @@ impl From<u8> for OpCode {
             2 => Self::ConstantLong,
             3 => Self::Negate,
             4 => Self::Add,
-            5 => Self::Subtract,
-            6 => Self::Multiply,
-            7 => Self::Divide,
+            5 => Self::Sub,
+            6 => Self::Mul,
+            7 => Self::Div,
             _ => Self::Unknown(value),
         }
     }
@@ -51,9 +51,9 @@ impl TryInto<u8> for OpCode {
             Self::ConstantLong => Ok(2),
             Self::Negate => Ok(3),
             Self::Add => Ok(4),
-            Self::Subtract => Ok(5),
-            Self::Multiply => Ok(6),
-            Self::Divide => Ok(7),
+            Self::Sub=> Ok(5),
+            Self::Mul=> Ok(6),
+            Self::Div=> Ok(7),
             Self::Unknown(value) => Ok(value),
         }
     }

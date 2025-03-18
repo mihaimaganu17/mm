@@ -2,7 +2,7 @@ use crate::{Disassembler, OpCode, Sequence, Value};
 use std::collections::LinkedList;
 
 // Flag enabling/disabling VM execution tracing for debugging
-const DEBUG_TRACE_EXECUTION: bool = true;
+const DEBUG_TRACE_EXECUTION: bool = false;
 
 pub struct VM<'vm> {
     // Sequence of bytecode that the VM executes
@@ -93,7 +93,7 @@ impl<'vm> VM<'vm> {
                 OpCode::Add => {
                     binary_op!(+);
                 }
-                OpCode::Subtract => {
+                OpCode::Sub => {
                     binary_op!(-);
                 }
                 _ => todo!(),

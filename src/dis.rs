@@ -44,6 +44,7 @@ impl Disassembler {
                 println!("Unknown opcode {}", byte);
                 offset + 1
             }
+            _ => todo!(),
         }
     }
 }

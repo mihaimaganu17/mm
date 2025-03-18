@@ -82,6 +82,8 @@ impl<'vm> VM<'vm> {
                         return Err(InterpretError::StackEmpty);
                     }
                 }
+                OpCode::Negate => {
+                }
                 _ => todo!(),
             }
         }

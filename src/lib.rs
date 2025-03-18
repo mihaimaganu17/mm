@@ -78,4 +78,22 @@ mod tests {
         let mut vm = VM::new(&seq);
         vm.interpret(&seq).unwrap();
     }
+
+    #[test]
+    fn add() {
+        let mut seq = Sequence::new();
+        let constant = Value::from(90.0);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        let constant = Value::from(10.0);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        // Push addition
+        seq.push(OpCode::Add, 17).unwrap();
+        // Push return
+        seq.push(OpCode::Return, 18).unwrap();
+        // Create a new VM that will execute code
+        let mut vm = VM::new(&seq);
+        vm.interpret(&seq).unwrap();
+    }
 }

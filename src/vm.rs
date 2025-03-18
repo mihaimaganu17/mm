@@ -93,6 +93,9 @@ impl<'vm> VM<'vm> {
                 OpCode::Add => {
                     binary_op!(+);
                 }
+                OpCode::Subtract => {
+                    binary_op!(-);
+                }
                 _ => todo!(),
             }
         }

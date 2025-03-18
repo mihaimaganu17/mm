@@ -63,4 +63,19 @@ mod tests {
         Disassembler::dis_sequence(&seq, "test sequence");
         Disassembler::dis_sequence(&seq2, "test sequence2");
     }
+
+    #[test]
+    fn negate() {
+        let mut seq = Sequence::new();
+        let constant = Value::from(1.2);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        // Push negation
+        seq.push(OpCode::Negate, 17).unwrap();
+        // Push return
+        seq.push(OpCode::Return, 18).unwrap();
+        // Create a new VM that will execute code
+        let mut vm = VM::new(&seq);
+        vm.interpret(&seq).unwrap();
+    }
 }

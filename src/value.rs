@@ -14,7 +14,7 @@ impl Neg for Value {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
-        Self(self.0)
+        Self(-self.0)
     }
 }
 

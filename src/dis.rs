@@ -40,11 +40,14 @@ impl Disassembler {
                 Instruction::constant_long("OP_CONSTANT_LONG", sequence, offset)
             }
             OpCode::Negate => Instruction::simple("OP_NEGATE", offset),
+            OpCode::Add => Instruction::simple("OP_ADD", offset),
+            OpCode::Subtract => Instruction::simple("OP_SUBTRACT", offset),
+            OpCode::Multiply => Instruction::simple("OP_MULTIPLY", offset),
+            OpCode::Divide => Instruction::simple("OP_DIVIDE", offset),
             OpCode::Unknown(byte) => {
                 println!("Unknown opcode {}", byte);
                 offset + 1
             }
-            _ => todo!(),
         }
     }
 }

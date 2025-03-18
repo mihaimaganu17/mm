@@ -200,4 +200,62 @@ mod tests {
         let mut vm = VM::new(&seq);
         vm.interpret(&seq).unwrap();
     }
+
+    #[test]
+    fn precedence_check1() {
+        // Testing: 1 + 2 * 3 (should be 7)
+        let mut seq = Sequence::new();
+        let constant = Value::from(1);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        let constant = Value::from(2);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        let constant = Value::from(3);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        // Push mul
+        seq.push(OpCode::Mul, 17).unwrap();
+        // Push Add
+        seq.push(OpCode::Add, 17).unwrap();
+        // Push return
+        seq.push(OpCode::Return, 21).unwrap();
+        // Create a new VM that will execute code
+        let mut vm = VM::new(&seq);
+        vm.interpret(&seq).unwrap();
+    }
+
+    #[test]
+    fn precedence_check2() {
+        // Testing: 1 + 2 * 3 - 4 / -5 (should be 7.8)
+        let mut seq = Sequence::new();
+        let constant = Value::from(1);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        let constant = Value::from(2);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        let constant = Value::from(3);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        // Push mul
+        seq.push(OpCode::Mul, 17).unwrap();
+        // Push Add
+        seq.push(OpCode::Add, 17).unwrap();
+        let constant = -Value::from(4);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        let constant = -Value::from(5);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        // Push division
+        seq.push(OpCode::Div, 17).unwrap();
+        // Push addition
+        seq.push(OpCode::Add, 17).unwrap();
+        // Push return
+        seq.push(OpCode::Return, 21).unwrap();
+        // Create a new VM that will execute code
+        let mut vm = VM::new(&seq);
+        vm.interpret(&seq).unwrap();
+    }
 }

@@ -1,11 +1,20 @@
 use std::fmt;
+use core::ops::Neg;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Value(f32);
 
 impl From<f32> for Value {
     fn from(value: f32) -> Self {
         Self(value)
+    }
+}
+
+impl Neg for Value {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Self(self.0)
     }
 }
 

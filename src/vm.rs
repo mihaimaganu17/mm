@@ -1,4 +1,4 @@
-use crate::{Disassembler, OpCode, Sequence};
+use crate::{Disassembler, OpCode, Sequence, Value};
 use std::collections::LinkedList;
 
 // Flag enabling/disabling VM execution tracing for debugging
@@ -14,10 +14,8 @@ pub struct VM<'vm> {
     // an array by index. For the Rust case, the compiler makes use of instructions that do pointer
     // math and dereferencing in 1 or 2 cycles (like LEA on x86) so this claim does not hold
     offset: usize,
-    // Stack that holds the operators needed to perform any of the VM's operations. It does not
-    // hold the actual operands or a reference to them, but rather, their index into the VM's
-    // storage.
-    stack: LinkedList<usize>,
+    // Stack that holds the operators needed to perform any of the VM's operations.
+    stack: LinkedList<Value>,
 }
 
 impl<'vm> VM<'vm> {
@@ -43,8 +41,8 @@ impl<'vm> VM<'vm> {
                 // Headline for the stack
                 println!("== Stack conttents ==");
                 // Print the stack contents
-                for value_idx in self.stack.iter() {
-                    println!("[{}]", self.sequence.constant(*value_idx));
+                for value in self.stack.iter() {
+                    println!("[{}]", value);
                 }
                 println!("== Current instruction ==");
                 // We disassemble the instruction at the current point
@@ -58,8 +56,7 @@ impl<'vm> VM<'vm> {
             match instruction {
                 OpCode::Return => {
                     // Print the top value from the stack
-                    if let Some(idx) = self.stack.pop_back() {
-                        let value = &self.sequence.constant(idx);
+                    if let Some(value) = self.stack.pop_back() {
                         println!("{value}");
                     } else {
                         println!("None");
@@ -67,15 +64,23 @@ impl<'vm> VM<'vm> {
                     return Ok(());
                 }
                 OpCode::Constant => {
-                    // Get the index of the constant in the sequence storage
-                    let idx = self.sequence.code()[self.offset];
+                    // Get the constant from the sequence storage
+                    let constant = self.sequence.read_constant(self.offset);
                     // Push the value's index to the stack to enable the constant in this scope
-                    self.stack.push_back(usize::from(idx));
-                    // Read the value
-                    let value = &self.sequence.constant(usize::from(idx));
+                    self.stack.push_back(constant.clone());
                     // Go past the constant
                     self.offset += 1;
-                    println!("{value}");
+                }
+                OpCode::Negate => {
+                    // Get the top value from the stack
+                    if let Some(constant) = self.stack.pop_back() {
+                        // Negate it
+                        let value = -constant;
+                        // Push the new value on the stack
+                        self.stack.push_back(value);
+                    } else {
+                        return Err(InterpretError::StackEmpty);
+                    }
                 }
                 _ => todo!(),
             }
@@ -96,4 +101,6 @@ pub enum InterpretError {
     CompileError,
     // Reports a dynamic error when running the bytecode
     RuntimeError,
+    // Stack trying to access and element but it's empty
+    StackEmpty,
 }

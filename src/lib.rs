@@ -132,7 +132,7 @@ mod tests {
         let constant = Value::from(23.0);
         // Push the operand for the instruction
         seq.write_constant(constant, 17).unwrap();
-        // Push addition
+        // Push subtraction
         seq.push(OpCode::Sub, 17).unwrap();
         // Push return
         seq.push(OpCode::Return, 18).unwrap();
@@ -150,7 +150,49 @@ mod tests {
         let constant = Value::from(250);
         // Push the operand for the instruction
         seq.write_constant(constant, 17).unwrap();
-        // Push addition
+        // Push negation
+        seq.push(OpCode::Negate, 17).unwrap();
+        // Push subtraction
+        seq.push(OpCode::Sub, 20).unwrap();
+        // Push return
+        seq.push(OpCode::Return, 21).unwrap();
+        // Create a new VM that will execute code
+        let mut vm = VM::new(&seq);
+        vm.interpret(&seq).unwrap();
+    }
+
+    #[test]
+    fn mul() {
+        let mut seq = Sequence::new();
+        let constant = Value::from(54.0);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        let constant = Value::from(8.0);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        // Push subtraction
+        seq.push(OpCode::Add, 17).unwrap();
+        let constant = Value::from(360.0);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        seq.push(OpCode::Mul, 17).unwrap();
+        // Push return
+        seq.push(OpCode::Return, 18).unwrap();
+        // Create a new VM that will execute code
+        let mut vm = VM::new(&seq);
+        vm.interpret(&seq).unwrap();
+    }
+
+    #[test]
+    fn div() {
+        let mut seq = Sequence::new();
+        let constant = Value::from(30);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        let constant = Value::from(250);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        // Push negation
         seq.push(OpCode::Negate, 17).unwrap();
         // Push subtraction
         seq.push(OpCode::Sub, 20).unwrap();

@@ -40,8 +40,8 @@ impl<'vm> VM<'vm> {
             // This macro pops the top 2 elements from the VM's stack and applies the `operator`
             // between them. The result is then pushed on the stack
             ($operator:tt) => {
-                let left = self.pop_stack()?;
                 let right = self.pop_stack()?;
+                let left = self.pop_stack()?;
                 let result = expr!(left $operator right);
                 self.stack.push_back(result);
             }
@@ -95,6 +95,12 @@ impl<'vm> VM<'vm> {
                 }
                 OpCode::Sub => {
                     binary_op!(-);
+                }
+                OpCode::Mul => {
+                    binary_op!(*);
+                }
+                OpCode::Div=> {
+                    binary_op!(/);
                 }
                 _ => todo!(),
             }

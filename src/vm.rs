@@ -56,11 +56,8 @@ impl<'vm> VM<'vm> {
             match instruction {
                 OpCode::Return => {
                     // Print the top value from the stack
-                    if let Some(value) = self.stack.pop_back() {
-                        println!("{value}");
-                    } else {
-                        println!("None");
-                    }
+                    let value = self.pop_stack()?;
+                    println!("{value}");
                     return Ok(());
                 }
                 OpCode::Constant => {
@@ -72,15 +69,10 @@ impl<'vm> VM<'vm> {
                     self.offset += 1;
                 }
                 OpCode::Negate => {
-                    // Get the top value from the stack
-                    if let Some(constant) = self.stack.pop_back() {
-                        // Negate it
-                        let value = -constant;
-                        // Push the new value on the stack
-                        self.stack.push_back(value);
-                    } else {
-                        return Err(InterpretError::StackEmpty);
-                    }
+                    // Get the top value from the stack and negate it
+                    let value = -self.pop_stack()?;
+                    // Push the new value on the stack
+                    self.stack.push_back(value);
                 }
                 OpCode::Negate => {
                 }
@@ -88,6 +80,10 @@ impl<'vm> VM<'vm> {
             }
         }
         Ok(())
+    }
+
+    pub fn pop_stack(&mut self) -> Result<Value, InterpretError> {
+       self.stack.pop_back().ok_or(InterpretError::StackEmpty)
     }
 
     // Empties the VM's stack

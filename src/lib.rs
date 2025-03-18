@@ -258,4 +258,66 @@ mod tests {
         let mut vm = VM::new(&seq);
         vm.interpret(&seq).unwrap();
     }
+
+    #[test]
+    fn no_op_negate() {
+        // Testing: 4 - 3 * -2 withouth the negate operator
+        let mut seq = Sequence::new();
+        let constant = Value::from(4);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        let constant = Value::from(0);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        let constant = Value::from(3);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        // Push subtract, give -3
+        seq.push(OpCode::Sub, 17).unwrap();
+        let constant = Value::from(0);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        let constant = Value::from(2);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        // Push subtract, give -2
+        seq.push(OpCode::Sub, 17).unwrap();
+        // Push mul for -3 * -2
+        seq.push(OpCode::Mul, 17).unwrap();
+        // Push add for 4 + (-3 * -2)
+        seq.push(OpCode::Add, 17).unwrap();
+        // Push return
+        seq.push(OpCode::Return, 21).unwrap();
+        // Create a new VM that will execute code
+        let mut vm = VM::new(&seq);
+        vm.interpret(&seq).unwrap();
+    }
+
+    #[test]
+    fn no_op_subtract() {
+        // Testing: 4 - 3 * -2 withouth the subtraction operator
+        let mut seq = Sequence::new();
+        let constant = Value::from(4);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        let constant = Value::from(3);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        // Push negation, give -3
+        seq.push(OpCode::Negate, 17).unwrap();
+        let constant = Value::from(2);
+        // Push the operand for the instruction
+        seq.write_constant(constant, 17).unwrap();
+        // Push negation, give -2
+        seq.push(OpCode::Negate, 17).unwrap();
+        // Push mul for -3 * -2
+        seq.push(OpCode::Mul, 17).unwrap();
+        // Push add for 4 + (-3 * -2)
+        seq.push(OpCode::Add, 17).unwrap();
+        // Push return
+        seq.push(OpCode::Return, 21).unwrap();
+        // Create a new VM that will execute code
+        let mut vm = VM::new(&seq);
+        vm.interpret(&seq).unwrap();
+    }
 }

@@ -189,13 +189,11 @@ mod tests {
         let constant = Value::from(30);
         // Push the operand for the instruction
         seq.write_constant(constant, 17).unwrap();
-        let constant = Value::from(250);
+        let constant = Value::from(60);
         // Push the operand for the instruction
         seq.write_constant(constant, 17).unwrap();
         // Push negation
-        seq.push(OpCode::Negate, 17).unwrap();
-        // Push subtraction
-        seq.push(OpCode::Sub, 20).unwrap();
+        seq.push(OpCode::Div, 17).unwrap();
         // Push return
         seq.push(OpCode::Return, 21).unwrap();
         // Create a new VM that will execute code

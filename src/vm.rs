@@ -31,6 +31,22 @@ impl<'vm> VM<'vm> {
     pub fn interpret(&mut self, sequence: &'vm Sequence) -> Result<(), InterpretError> {
         self.sequence = sequence;
 
+        macro_rules! expr {
+            // Evaluates a given expression. This is used in conjunction with the below rule
+            ($e:expr) => { $e }
+        }
+
+        macro_rules! binary_op {
+            // This macro pops the top 2 elements from the VM's stack and applies the `operator`
+            // between them. The result is then pushed on the stack
+            ($operator:tt) => {
+                let left = self.pop_stack()?;
+                let right = self.pop_stack()?;
+                let result = expr!(left $operator right);
+                self.stack.push_back(result);
+            }
+        }
+
         loop {
             // If we reached the end of the sequence, break
             if self.offset == self.sequence.code().len() {
@@ -74,6 +90,9 @@ impl<'vm> VM<'vm> {
                     // Push the new value on the stack
                     self.stack.push_back(value);
                 }
+                OpCode::Add => {
+                    binary_op!(+);
+                }
                 _ => todo!(),
             }
         }
@@ -88,15 +107,6 @@ impl<'vm> VM<'vm> {
     pub fn reset_stack(&mut self) {
         // Pop elements from the stack until is is empty
         while self.stack.pop_back().is_some() {}
-    }
-}
-
-macro_rules! binary_op {
-    ($operator:literal) => {
-        let left = self.pop_stack()?;
-        let right = self.pop_stack()?;
-        let result = left $literal right;
-        self.stack.push_back(result);
     }
 }
 

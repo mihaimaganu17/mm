@@ -1,5 +1,5 @@
 use std::fmt;
-use core::ops::Neg;
+use core::ops::{Add, Neg};
 
 #[derive(Debug, Clone)]
 pub struct Value(f32);
@@ -15,6 +15,14 @@ impl Neg for Value {
 
     fn neg(self) -> Self::Output {
         Self(-self.0)
+    }
+}
+
+impl Add for Value {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self(self.0 + rhs.0)
     }
 }
 

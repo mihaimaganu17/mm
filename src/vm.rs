@@ -74,8 +74,6 @@ impl<'vm> VM<'vm> {
                     // Push the new value on the stack
                     self.stack.push_back(value);
                 }
-                OpCode::Negate => {
-                }
                 _ => todo!(),
             }
         }
@@ -90,6 +88,15 @@ impl<'vm> VM<'vm> {
     pub fn reset_stack(&mut self) {
         // Pop elements from the stack until is is empty
         while self.stack.pop_back().is_some() {}
+    }
+}
+
+macro_rules! binary_op {
+    ($operator:literal) => {
+        let left = self.pop_stack()?;
+        let right = self.pop_stack()?;
+        let result = left $literal right;
+        self.stack.push_back(result);
     }
 }
 

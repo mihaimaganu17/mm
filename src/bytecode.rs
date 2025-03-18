@@ -51,9 +51,9 @@ impl TryInto<u8> for OpCode {
             Self::ConstantLong => Ok(2),
             Self::Negate => Ok(3),
             Self::Add => Ok(4),
-            Self::Sub=> Ok(5),
-            Self::Mul=> Ok(6),
-            Self::Div=> Ok(7),
+            Self::Sub => Ok(5),
+            Self::Mul => Ok(6),
+            Self::Div => Ok(7),
             Self::Unknown(value) => Ok(value),
         }
     }

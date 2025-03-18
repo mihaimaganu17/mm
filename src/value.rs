@@ -1,5 +1,5 @@
+use core::ops::{Add, Div, Mul, Neg, Sub};
 use std::fmt;
-use core::ops::{Add, Sub, Mul, Div, Neg};
 
 #[derive(Debug, Clone)]
 pub struct Value(f32);

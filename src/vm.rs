@@ -33,7 +33,9 @@ impl<'vm> VM<'vm> {
 
         macro_rules! expr {
             // Evaluates a given expression. This is used in conjunction with the below rule
-            ($e:expr) => { $e }
+            ($e:expr) => {
+                $e
+            };
         }
 
         macro_rules! binary_op {
@@ -99,7 +101,7 @@ impl<'vm> VM<'vm> {
                 OpCode::Mul => {
                     binary_op!(*);
                 }
-                OpCode::Div=> {
+                OpCode::Div => {
                     binary_op!(/);
                 }
                 _ => todo!(),
@@ -109,7 +111,7 @@ impl<'vm> VM<'vm> {
     }
 
     pub fn pop_stack(&mut self) -> Result<Value, InterpretError> {
-       self.stack.pop_back().ok_or(InterpretError::StackEmpty)
+        self.stack.pop_back().ok_or(InterpretError::StackEmpty)
     }
 
     // Empties the VM's stack

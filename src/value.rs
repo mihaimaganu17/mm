@@ -10,6 +10,12 @@ impl From<f32> for Value {
     }
 }
 
+impl From<u16> for Value {
+    fn from(value: u16) -> Self {
+        Self(value.into())
+    }
+}
+
 impl Neg for Value {
     type Output = Self;
 

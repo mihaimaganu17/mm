@@ -5,6 +5,7 @@ mod value;
 mod vm;
 mod interpret;
 mod compiler;
+mod scan;
 
 
 pub use bytecode::{OpCode, Sequence};

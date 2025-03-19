@@ -9,6 +9,96 @@ pub use dis::Disassembler;
 pub use value::Value;
 pub use vm::VM;
 
+use std::{
+    io::{self, Write},
+    path::Path,
+    fs,
+};
+
+#[derive(Default)]
+pub struct MMalis;
+
+impl MMalis {
+    /// Scans, compiles and executes a Malis file found in `path`
+    pub fn execute<P: AsRef<Path>>(path: P) -> Result<(), MMalisError> {
+        // Create a new `MMalis` object
+        let mut malis = Self::default();
+        // Read the file from the path
+        let source = fs::read_to_string(path)?;
+        // Run the contents of the file
+        malis.run(source.as_str(), false)
+    }
+
+    // Main, single point running function for executiong of `bytes`
+    fn run(&mut self, _bytes: &str, is_repl: bool) -> Result<(), MMalisError> {
+        if is_repl {
+            println!("In the REPL");
+        } else {
+            println!("Executing file");
+        }
+        Ok(())
+    }
+
+    /// Fires up an interactive command prompt which is capable of executing code one line at
+    /// a time.
+    // Also known as "REPL", from Lisp:
+    // - Read a line of input
+    // - Evaluate it
+    // - Print the result
+    // - Loop and do it all over again
+    pub fn interactive() -> Result<(), MMalisError> {
+        let mut malis = MMalis::default();
+        // Get new handles to the stdin and stdout streams
+        let stdin = io::stdin();
+        let mut stdout = io::stdout();
+        // Create a new buffer to store the input
+        let mut buffer = String::new();
+
+        loop {
+            // Write the new line identifier
+            let _ = stdout.write(b"> ")?;
+            // Flush it to make sure we print it
+            stdout.flush()?;
+            // Read the next line
+            let bread = stdin.read_line(&mut buffer)?;
+
+            // If no bytes were read, it means we reached `End-of-File` or `Ctrl-D` was pressed.
+            if bread == 0 {
+                break;
+            }
+
+            match buffer.as_str().trim() {
+                "q" | "quit" | "exit" => break,
+                _ => {}
+            }
+
+            // If a line is invalid, we report the error and go to the next iteration. We also
+            // specify the `is_repl` true such that we could evaluate both expressions and
+            // statements
+            if let Err(err) = malis.run(buffer.as_str(), true) {
+                println!("Interpreter: {err:?}");
+                stdout.flush()?;
+            }
+
+            // Make sure to clean the buffer for the next iteration
+            buffer.clear();
+        }
+
+        Ok(())
+    }
+}
+
+#[derive(Debug)]
+pub enum MMalisError {
+    StdIO(std::io::Error),
+}
+
+impl From<std::io::Error> for MMalisError {
+    fn from(value: std::io::Error) -> Self {
+        Self::StdIO(value)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

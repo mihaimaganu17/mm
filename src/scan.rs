@@ -23,7 +23,7 @@ impl<'a> Scanner<'a> {
     }
 
     pub fn next_token(&mut self) -> Option<Result<Token, ScanError>> {
-        if self.offset>= self.data.len() {
+        if self.offset >= self.data.len() {
             None
         } else {
             let curr = self.data[self.offset];

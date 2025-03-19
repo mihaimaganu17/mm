@@ -1,4 +1,4 @@
-use crate::scan::{Scanner, ScanError};
+use crate::scan::{ScanError, Scanner};
 
 pub struct Compiler;
 

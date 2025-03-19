@@ -1,4 +1,4 @@
-use crate::compiler::{Compiler, CompileError};
+use crate::compiler::{CompileError, Compiler};
 
 pub struct Interpreter;
 

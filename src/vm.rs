@@ -1,6 +1,6 @@
+use crate::InterpretError;
 use crate::{Disassembler, OpCode, Sequence, Value};
 use std::collections::LinkedList;
-use crate::InterpretError;
 
 // Flag enabling/disabling VM execution tracing for debugging
 const DEBUG_TRACE_EXECUTION: bool = false;
@@ -121,4 +121,3 @@ impl<'vm> VM<'vm> {
         while self.stack.pop_back().is_some() {}
     }
 }
-

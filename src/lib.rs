@@ -1,24 +1,23 @@
 mod alloc;
 mod bytecode;
-mod dis;
-mod value;
-mod vm;
-mod interpret;
 mod compiler;
+mod dis;
+mod interpret;
 mod scan;
 mod token;
-
+mod value;
+mod vm;
 
 pub use bytecode::{OpCode, Sequence};
 pub use dis::Disassembler;
+use interpret::{InterpretError, Interpreter};
 pub use value::Value;
 pub use vm::VM;
-use interpret::{Interpreter, InterpretError};
 
 use std::{
+    fs,
     io::{self, Write},
     path::Path,
-    fs,
 };
 
 #[derive(Default)]

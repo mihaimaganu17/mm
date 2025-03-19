@@ -4,6 +4,8 @@ mod dis;
 mod value;
 mod vm;
 mod interpret;
+mod compiler;
+
 
 pub use bytecode::{OpCode, Sequence};
 pub use dis::Disassembler;
@@ -32,7 +34,7 @@ impl MMalis {
     }
 
     // Main, single point running function for executiong of `bytes`
-    fn run(&mut self, bytes: &[u8], is_repl: bool) -> Result<(), MMalisError> {
+    fn run(&mut self, bytes: &[u8], _is_repl: bool) -> Result<(), MMalisError> {
         let interpreter = Interpreter;
         Ok(interpreter.interpret(bytes)?)
     }

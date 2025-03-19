@@ -1,5 +1,6 @@
 use crate::{Disassembler, OpCode, Sequence, Value};
 use std::collections::LinkedList;
+use crate::InterpretError;
 
 // Flag enabling/disabling VM execution tracing for debugging
 const DEBUG_TRACE_EXECUTION: bool = false;
@@ -121,12 +122,3 @@ impl<'vm> VM<'vm> {
     }
 }
 
-#[derive(Debug)]
-pub enum InterpretError {
-    // Reports a static error when compiling the source code
-    CompileError,
-    // Reports a dynamic error when running the bytecode
-    RuntimeError,
-    // Stack trying to access and element but it's empty
-    StackEmpty,
-}

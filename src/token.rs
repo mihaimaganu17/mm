@@ -10,6 +10,18 @@ pub struct Token {
     line: usize,
 }
 
+impl Token {
+    // Used to debug the source code
+    pub fn new(t_type: TokenType, start: usize, len: usize, line: usize) -> Self {
+        Self {
+            t_type,
+            start,
+            len,
+            line,
+        }
+    }
+}
+
 impl Default for TokenType {
     fn default() -> Self {
         Self::Eof
@@ -22,6 +34,8 @@ pub enum TokenType {
     Comparison(Comparison),
     //Literal(Literal),
     Keyword(Keyword),
+    // Only available for debuggin purposes
+    DebugByte(u8),
     Ident,
     Ignored,
     Eof,

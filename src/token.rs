@@ -20,6 +20,10 @@ impl Token {
             line,
         }
     }
+
+    pub fn line(&self) -> usize {
+        self.line
+    }
 }
 
 impl Default for TokenType {
@@ -32,9 +36,9 @@ impl Default for TokenType {
 pub enum TokenType {
     SingleChar(SingleChar),
     Comparison(Comparison),
-    //Literal(Literal),
+    Literal(Literal),
     Keyword(Keyword),
-    // Only available for debuggin purposes
+    // Only available for debugging purposes
     DebugByte(u8),
     Ident,
     Ignored,
@@ -73,8 +77,8 @@ pub enum Comparison {
 #[derive(Debug)]
 pub enum Literal {
     // Because `String` is reserved in Rust
-    LitString(String),
-    Number([u8; 4]),
+    LitString,
+    Number,
 }
 
 #[derive(Debug)]

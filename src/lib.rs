@@ -3,11 +3,13 @@ mod bytecode;
 mod dis;
 mod value;
 mod vm;
+mod interpret;
 
 pub use bytecode::{OpCode, Sequence};
 pub use dis::Disassembler;
 pub use value::Value;
 pub use vm::VM;
+use interpret::{Interpreter, InterpretError};
 
 use std::{
     io::{self, Write},
@@ -24,19 +26,15 @@ impl MMalis {
         // Create a new `MMalis` object
         let mut malis = Self::default();
         // Read the file from the path
-        let source = fs::read_to_string(path)?;
+        let source = fs::read(path)?;
         // Run the contents of the file
-        malis.run(source.as_str(), false)
+        malis.run(&source, false)
     }
 
     // Main, single point running function for executiong of `bytes`
-    fn run(&mut self, _bytes: &str, is_repl: bool) -> Result<(), MMalisError> {
-        if is_repl {
-            println!("In the REPL");
-        } else {
-            println!("Executing file");
-        }
-        Ok(())
+    fn run(&mut self, bytes: &[u8], is_repl: bool) -> Result<(), MMalisError> {
+        let interpreter = Interpreter;
+        Ok(interpreter.interpret(bytes)?)
     }
 
     /// Fires up an interactive command prompt which is capable of executing code one line at
@@ -75,7 +73,7 @@ impl MMalis {
             // If a line is invalid, we report the error and go to the next iteration. We also
             // specify the `is_repl` true such that we could evaluate both expressions and
             // statements
-            if let Err(err) = malis.run(buffer.as_str(), true) {
+            if let Err(err) = malis.run(buffer.as_bytes(), true) {
                 println!("Interpreter: {err:?}");
                 stdout.flush()?;
             }
@@ -91,11 +89,18 @@ impl MMalis {
 #[derive(Debug)]
 pub enum MMalisError {
     StdIO(std::io::Error),
+    InterpretError(InterpretError),
 }
 
 impl From<std::io::Error> for MMalisError {
     fn from(value: std::io::Error) -> Self {
         Self::StdIO(value)
+    }
+}
+
+impl From<InterpretError> for MMalisError {
+    fn from(value: InterpretError) -> Self {
+        Self::InterpretError(value)
     }
 }
 

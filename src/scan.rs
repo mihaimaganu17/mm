@@ -26,6 +26,9 @@ impl<'a> Scanner<'a> {
         if self.start >= self.data.len() {
             None
         } else {
+            // Skip whitespaces first
+            self.skip_whitespace()?;
+            // Start from where we left off at the previous token
             self.start = self.offset;
 
             let token_type = match self.next_byte()? {
@@ -82,6 +85,18 @@ impl<'a> Scanner<'a> {
         let b = self.data.get(self.offset);
         self.offset = self.offset.saturating_add(1);
         b
+    }
+
+    fn peek_next(&mut self) -> Option<&u8> {
+        let b = self.data.get(self.offset);
+        b
+    }
+
+    fn skip_whitespace(&mut self) -> Option<()> {
+        while matches!(self.peek_next()?, b' ' | b'\r' | b'\t') {
+            self.next_byte()?;
+        }
+        Some(())
     }
 }
 

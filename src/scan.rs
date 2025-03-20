@@ -93,7 +93,14 @@ impl<'a> Scanner<'a> {
     }
 
     fn skip_whitespace(&mut self) -> Option<()> {
-        while matches!(self.peek_next()?, b' ' | b'\r' | b'\t') {
+        while match self.peek_next()? {
+            b' ' | b'\r' | b'\t' => true,
+            b'\n' => {
+                self.line = self.line.saturating_add(1);
+                true
+            }
+            _ => false,
+        } {
             self.next_byte()?;
         }
         Some(())

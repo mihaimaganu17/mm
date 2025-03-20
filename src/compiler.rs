@@ -32,8 +32,9 @@ impl Compiler {
             }
             // Get the representation of the token from the bytes
             let token_str = std::str::from_utf8(
-                bytes.get(token.start()..token.end())
-                    .ok_or(CompileError::ScanOutOfBounds(token.start(), token.end()))?
+                bytes
+                    .get(token.start()..token.end())
+                    .ok_or(CompileError::ScanOutOfBounds(token.start(), token.end()))?,
             )?;
             println!("{:?} {}", token.t_type(), token_str);
         }
@@ -50,4 +51,3 @@ pub enum CompileError {
 
 crate::impl_from_err!(ScanError, CompileError, ScanError);
 crate::impl_from_err!(core::str::Utf8Error, CompileError, Utf8Error);
-

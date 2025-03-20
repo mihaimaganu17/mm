@@ -4,7 +4,7 @@ mod compiler;
 mod dis;
 mod interpret;
 mod scan;
-mod token;
+pub mod token;
 mod value;
 mod vm;
 
@@ -27,7 +27,7 @@ impl MMalis {
     /// Scans, compiles and executes a Malis file found in `path`
     pub fn execute<P: AsRef<Path>>(path: P) -> Result<(), MMalisError> {
         // Create a new `MMalis` object
-        let mut malis = Self::default();
+        let mut malis = Self;
         // Read the file from the path
         let source = fs::read(path)?;
         // Run the contents of the file
@@ -48,7 +48,7 @@ impl MMalis {
     // - Print the result
     // - Loop and do it all over again
     pub fn interactive() -> Result<(), MMalisError> {
-        let mut malis = MMalis::default();
+        let mut malis = MMalis;
         // Get new handles to the stdin and stdout streams
         let stdin = io::stdin();
         let mut stdout = io::stdout();
@@ -96,7 +96,7 @@ macro_rules! impl_from_err {
                 Self::$err(value)
             }
         }
-    }
+    };
 }
 
 pub(crate) use impl_from_err;

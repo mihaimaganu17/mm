@@ -26,8 +26,8 @@ impl<'a> Scanner<'a> {
         if self.start >= self.data.len() {
             None
         } else {
-            // Skip whitespaces first
-            self.skip_whitespace()?;
+            // Skip whitespaces and comments first
+            self.skip_non_tokens()?;
             // Start from where we left off at the previous token
             self.start = self.offset;
 
@@ -92,12 +92,23 @@ impl<'a> Scanner<'a> {
         b
     }
 
-    fn skip_whitespace(&mut self) -> Option<()> {
+    fn skip_non_tokens(&mut self) -> Option<()> {
         while match self.peek_next()? {
             b' ' | b'\r' | b'\t' => true,
             b'\n' => {
                 self.line = self.line.saturating_add(1);
                 true
+            }
+            b'/' => {
+                if let Some(b'/') = self.peek_next() {
+                    // A comment goes until end of line
+                    while self.peek_next()? != &b'\n' {
+                        self.next_byte()?;
+                    }
+                    true
+                } else {
+                    false
+                }
             }
             _ => false,
         } {

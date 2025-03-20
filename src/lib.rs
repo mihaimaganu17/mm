@@ -89,6 +89,18 @@ impl MMalis {
     }
 }
 
+macro_rules! impl_from_err {
+    ($from:ty, $to:ty, $err:ident) => {
+        impl From<$from> for $to {
+            fn from(value: $from) -> $to {
+                Self::$err(value)
+            }
+        }
+    }
+}
+
+pub(crate) use impl_from_err;
+
 #[derive(Debug)]
 pub enum MMalisError {
     StdIO(std::io::Error),

@@ -24,6 +24,18 @@ impl Token {
     pub fn line(&self) -> usize {
         self.line
     }
+
+    pub fn start(&self) -> usize {
+        self.start
+    }
+
+    pub fn t_type(&self) -> &TokenType {
+        &self.t_type
+    }
+
+    pub fn end(&self) -> usize {
+        self.start.saturating_add(self.len)
+    }
 }
 
 impl Default for TokenType {

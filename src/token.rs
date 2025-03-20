@@ -74,15 +74,15 @@ pub enum SingleChar {
     Bang,
     Question,
     Equal,
+    Less,
+    Greater,
 }
 
 #[derive(Debug)]
 pub enum Comparison {
     BangEqual,
     EqualEqual,
-    Greater,
     GreaterEqual,
-    Less,
     LessEqual,
 }
 

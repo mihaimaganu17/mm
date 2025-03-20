@@ -7,7 +7,8 @@ impl Compiler {
         // Currently no line is provided. We want to update this for each token we get
         let mut line = None;
         let mut scanner = Scanner::new(bytes);
-        // Keeps scanning and compiling tokens until the end of `bytes`
+        // Keeps scanning and compiling tokens until the end of `bytes`. Usually the last token
+        // would be `Eof` and after that the `iterator` would return `None`
         while let Some(maybe_token) = scanner.next_token() {
             // Get the next token
             let token = maybe_token?;

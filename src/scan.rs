@@ -1,4 +1,4 @@
-use crate::token::{Comparison, SingleChar, Token, TokenType, Literal};
+use crate::token::{Comparison, Literal, SingleChar, Token, TokenType};
 
 #[derive(Debug)]
 pub struct Scanner<'a> {

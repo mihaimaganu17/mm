@@ -1,4 +1,4 @@
-use crate::token::{Comparison, SingleChar, Token, TokenType};
+use crate::token::{Comparison, SingleChar, Token, TokenType, Literal};
 
 #[derive(Debug)]
 pub struct Scanner<'a> {
@@ -73,6 +73,13 @@ impl<'a> Scanner<'a> {
                         TokenType::SingleChar(SingleChar::Greater)
                     }
                 }
+                b'"' => {
+                    // A single double quote specifies a string
+                    match self.string() {
+                        Ok(token) => token,
+                        Err(e) => return Some(Err(e)),
+                    }
+                }
                 _ => TokenType::Eof,
             };
             // Create a new debug token
@@ -90,6 +97,39 @@ impl<'a> Scanner<'a> {
     fn peek_next(&mut self) -> Option<&u8> {
         let b = self.data.get(self.offset);
         b
+    }
+
+    fn string(&mut self) -> Result<TokenType, ScanError> {
+        // Peek the next byte
+        while let Some(byte) = self.peek_next() {
+            // Until we find the closing double quote
+            if *byte == b'\"' {
+                break;
+            }
+            // If we encounter a newline
+            if *byte == b'\n' {
+                // We tell the scanner we are at the next line
+                self.line += 1;
+            }
+            self.next_byte().ok_or(ScanError::CannotConsumeByte)?;
+        }
+        // If we are at the end (meaning we did not yet consume the ending double quote) we return
+        // an error
+        if self.is_at_end() {
+            return Err(ScanError::UnterminatedString(self.start, self.offset));
+        }
+        // Consume the closing quote
+        self.next_byte().ok_or(ScanError::CannotConsumeByte)?;
+        // Return a new string token
+        Ok(TokenType::Literal(Literal::LitString))
+    }
+
+    fn _bytes_left(&self) -> usize {
+        self.data.len() - self.offset
+    }
+
+    fn is_at_end(&self) -> bool {
+        self.data.len() == self.offset
     }
 
     fn skip_non_tokens(&mut self) -> Option<()> {
@@ -119,4 +159,7 @@ impl<'a> Scanner<'a> {
 }
 
 #[derive(Debug)]
-pub enum ScanError {}
+pub enum ScanError {
+    UnterminatedString(usize, usize),
+    CannotConsumeByte,
+}
